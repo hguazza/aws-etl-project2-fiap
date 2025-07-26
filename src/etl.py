@@ -24,8 +24,13 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
+    
+# Criando o caminho particionado dos dados no S3
+data_hoje = datetime.today()
+s3_path = f"raw/ano={data_hoje.year}/mes={data_hoje.month:02d}/dia={data_hoje.day:02d}/b3_dados_brutos.parquet"
+
 # Environment variables (with defaults for local testing if not set)
-S3_BUCKET_NAME_RAW = os.getenv("NOME_BUCKET_RAW", "your-default-raw-bucket-name") # IMPORTANT: Set a valid default or ensure env var is always present
+bucket_name = "big-data-architecture-fiap-fase-002"
 AWS_REGION = os.getenv("AWS_REGION", "us-east-1") # Example default region
 B3_SCRAPE_URL = os.getenv("B3_SCRAPE_URL", "https://sistemaswebb3-listados.b3.com.br/indexPage/day/IBOV?language=pt-br")
 PAGINATION_CLICKS = int(os.getenv("PAGINATION_CLICKS", 5)) # Number of times to click next page
@@ -44,8 +49,8 @@ def get_s3_client(region_name: str) -> boto3.client:
             aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
             aws_session_token=os.getenv("AWS_SESSION_TOKEN")
         )
-        s3_client.head_bucket(Bucket=S3_BUCKET_NAME_RAW) # Validate bucket access/existence
-        logger.info(f"Successfully initialized S3 client for bucket '{S3_BUCKET_NAME_RAW}' in region '{region_name}'.")
+        s3_client.head_bucket(Bucket=bucket_name) # Validate bucket access/existence
+        logger.info(f"Successfully initialized S3 client for bucket '{bucket_name}' in region '{region_name}'.")
         return s3_client
     except botocore.exceptions.NoCredentialsError:
         logger.error("AWS credentials not found. Ensure AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, and AWS_SESSION_TOKEN are set.")
@@ -53,9 +58,9 @@ def get_s3_client(region_name: str) -> boto3.client:
     except botocore.exceptions.ClientError as e:
         error_code = int(e.response.get("Error", {}).get("Code", -1))
         if error_code == 404:
-            logger.error(f"S3 bucket '{S3_BUCKET_NAME_RAW}' not found. Please create it or check the name.")
+            logger.error(f"S3 bucket '{bucket_name}' not found. Please create it or check the name.")
         elif error_code == 403:
-            logger.error(f"Access denied to S3 bucket '{S3_BUCKET_NAME_RAW}'. Check your IAM permissions.")
+            logger.error(f"Access denied to S3 bucket '{bucket_name}'. Check your IAM permissions.")
         else:
             logger.error(f"An S3 client error occurred: {e}")
         raise
@@ -241,7 +246,7 @@ def main():
         transformed_df = transform_b3_data(raw_df)
 
         # 5. Upload to S3
-        upload_dataframe_to_s3(s3, transformed_df, S3_BUCKET_NAME_RAW, prefix="raw")
+        upload_dataframe_to_s3(s3, transformed_df, bucket_name, prefix="raw")
 
         logger.info("B3 data pipeline completed successfully!")
 
