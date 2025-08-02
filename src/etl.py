@@ -30,8 +30,8 @@ data_hoje = datetime.today()
 s3_path = f"raw/ano={data_hoje.year}/mes={data_hoje.month:02d}/dia={data_hoje.day:02d}/b3_dados_brutos.parquet"
 
 # Environment variables (with defaults for local testing if not set)
-bucket_name = "big-data-architecture-fiap-fase-002"
-AWS_REGION = os.getenv("AWS_REGION", "us-east-1") # Example default region
+bucket_name = "bucket-fiap-b3"
+AWS_REGION = os.getenv("AWS_REGION", "us-east-1")
 B3_SCRAPE_URL = os.getenv("B3_SCRAPE_URL", "https://sistemaswebb3-listados.b3.com.br/indexPage/day/IBOV?language=pt-br")
 PAGINATION_CLICKS = int(os.getenv("PAGINATION_CLICKS", 5)) # Number of times to click next page
 
