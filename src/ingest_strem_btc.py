@@ -34,14 +34,11 @@ def get_cripto_price(coin):
 
 def scrape_cripto_price(coin):
     url = 'https://www.google.com/search?q=' + coin + 'price'
-    html = requests.get(url)
-    soup = BeautifulSoup(html.text, 'html.parser')
-    text = soup.find('div', attrs={
-        'class': 'pclqee'
-    }).find({
-        'div': 'pclqee'
-    }).text
-    return text
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    span = soup.find('span', class_='pclqee')
+    texti = span.text if span else "-"
+    return texti
 
 
 while True:

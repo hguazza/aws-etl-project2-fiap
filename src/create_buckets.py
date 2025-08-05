@@ -9,6 +9,7 @@ aws_access_key_id = os.getenv("aws_access_key_id")
 aws_secret_access_key = os.getenv("aws_secret_access_key")
 aws_session_token = os.getenv("aws_session_token")
 region_name = 'us-east-1'
+bucket_name = os.getenv("bucket_name")
 
 # Criando agente boto3
 s3_client = boto3.client(
@@ -19,9 +20,9 @@ s3_client = boto3.client(
 )
 
 bucket_names = [
-    "bovespa-pregao-b3-project2-fiap-08",
-    "bitcoin-stream-project2-fiap-08",
-    "backup-bitcoin-stream-project2-fiap-08",
+    bucket_name,
+    # "bitcoin-stream-project2-fiap-08",
+    # "backup-bitcoin-stream-project2-fiap-08",
 ]
 
 

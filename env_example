@@ -1,4 +1,4 @@
-AWS_ACCESS_KEY_ID = ""
-AWS_SECRET_ACCESS_KEY = ""
-AWS_SESSION_TOKEN = ""
-NOME_BUCKET_RAW = ""
+aws_access_key_id=
+aws_secret_access_key=
+aws_session_token=
+bucket_name=

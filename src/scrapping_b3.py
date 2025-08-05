@@ -17,26 +17,26 @@ import sqlite3
 
 load_dotenv()
 
-# Criar conexão com banco SQLite
-db_path = "aws_etl_projeto2_fiap.db"
-conn = sqlite3.connect(db_path)
-cursor = conn.cursor()
+# # Criar conexão com banco SQLite
+# db_path = "aws_etl_projeto2_fiap.db"
+# conn = sqlite3.connect(db_path)
+# cursor = conn.cursor()
 
-# Criar tabela se não existir
-cursor.execute("""
-    CREATE TABLE IF NOT EXISTS pregao_b3 (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        cod TEXT,
-        acao TEXT,
-        tipo TEXT,
-        qtde_teorica BIGINT,
-        part_percent REAL,
-        data_hora TEXT
+# # Criar tabela se não existir
+# cursor.execute("""
+#     CREATE TABLE IF NOT EXISTS pregao_b3 (
+#         id INTEGER PRIMARY KEY AUTOINCREMENT,
+#         cod TEXT,
+#         acao TEXT,
+#         tipo TEXT,
+#         qtde_teorica BIGINT,
+#         part_percent REAL,
+#         data_hora TEXT
       
-    )
-""")
-conn.commit()
-logging.info("Tabela 'pregao_b3' verificada/criada com sucesso.")
+#     )
+# """)
+# conn.commit()
+# logging.info("Tabela 'pregao_b3' verificada/criada com sucesso.")
 
 # Configura o logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -137,43 +137,43 @@ def executar_scraping():
 
     # Inserir todos os dados de uma vez usando executemany
 
-    try:
-        cursor.executemany(
-            "INSERT INTO pregao_b3 (cod, acao, tipo, qtde_teorica, part_percent) VALUES (?, ?, ?, ?, ?, ?)",
-            dados_para_inserir
-        )
+    # try:
+    #     cursor.executemany(
+    #         "INSERT INTO pregao_b3 (cod, acao, tipo, qtde_teorica, part_percent) VALUES (?, ?, ?, ?, ?, ?)",
+    #         dados_para_inserir
+    #     )
 
-        # Confirmar a transação
-        conn.commit()
-        logging.info("Dados inseridos com sucesso no banco de dados.")
+    #     # Confirmar a transação
+    #     conn.commit()
+    #     logging.info("Dados inseridos com sucesso no banco de dados.")
 
-    except sqlite3.Error as e:
-        logging.error(f"Erro ao inserir dados no banco de dados: {e}")
-        # Opcional: fazer rollback em caso de erro
-        if 'conn' in locals():
-            conn.rollback()
+    # except sqlite3.Error as e:
+    #     logging.error(f"Erro ao inserir dados no banco de dados: {e}")
+    #     # Opcional: fazer rollback em caso de erro
+    #     if 'conn' in locals():
+    #         conn.rollback()
 
-    finally:
-        # Garantir que a conexão seja fechada
-        if 'conn' in locals():
-            conn.close()
-            logging.info("Conexão com o banco de dados fechada.")
+    # finally:
+    #     # Garantir que a conexão seja fechada
+    #     if 'conn' in locals():
+    #         conn.close()
+    #         logging.info("Conexão com o banco de dados fechada.")
 
     # Upload do arquivo para a pasta local
-    logging.info("Fazendo upload do arquivo parquet para a pasta local...")
+    # logging.info("Fazendo upload do arquivo parquet para a pasta local...")
     
-    parquet_destination = f"parquet_arq/pregao_b3/ano={data_hoje.year}/mes={data_hoje.month:02d}/dia={data_hoje.day:02d}.parquet"
-    parquet_directory = os.path.dirname(parquet_destination)
-    os.makedirs(parquet_directory, exist_ok=True)
+    # parquet_destination = f"parquet_arq/pregao_b3/ano={data_hoje.year}/mes={data_hoje.month:02d}/dia={data_hoje.day:02d}.parquet"
+    # parquet_directory = os.path.dirname(parquet_destination)
+    # os.makedirs(parquet_directory, exist_ok=True)
 
-    try:
-        buffer_parquet.seek(0)
-        with open(parquet_destination, "wb") as f:
-            f.write(buffer_parquet.getvalue())
-        logging.info("Upload para a pasta local concluído.")
-    except Exception as e:
-        logging.error(f"Erro no upload para a pasta local: {e}")
-        return
+    # try:
+    #     buffer_parquet.seek(0)
+    #     with open(parquet_destination, "wb") as f:
+    #         f.write(buffer_parquet.getvalue())
+    #     logging.info("Upload para a pasta local concluído.")
+    # except Exception as e:
+    #     logging.error(f"Erro no upload para a pasta local: {e}")
+    #     return
 
     # Upload do arquivo para o bucket S3
     try:
